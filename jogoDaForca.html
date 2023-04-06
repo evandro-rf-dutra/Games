@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    p{
+        color: black;
+        font-size: large;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+    p#palavra{
+        color: black;
+        font-size: xx-large;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    h1{
+        color: blue;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+    .gallery{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .btn{
+        font-family: 'Courier New', Courier, monospace;
+        background-color: white;
+        height: 50px;
+        width: 50px;
+        border: solid 1px gray;
+        font-size: 30px;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+    .btn:hover{
+
+        background-color: blue;
+        color: white;
+        transition: 0.2s;
+        opacity: 0.7;
+
+    }
+    .btn:disabled{
+        background-color: grey;
+    }
+</style>
+
+<script>
+
+    // PALAVRAS SEMPRE EM LETRA MAIUSCULA, E SEM ACENTOS E Ç
+    var lista = [
+                    {dica:'Fruta', palavras:['ABACAXI','MACA','BANANA','MANGA','ABACATE'] },
+                    {dica:'Objeto', palavras:['CELULAR','TELEVISAO','SOFA','QUADRO'] },
+                    {dica: 'Animal', palavras:['GATO','CACHORRO','GALINHA', 'GIRAFA','COELHO']}
+                ];
+
+    // serão convertidos para vetores... pq acho mais facil manipular os caracteres
+    var palavraSecreta = [];
+    var palavraSelecionada = [];
+    var contadorTentativas = 0;
+    var contadorTentativasMAX = 7; // cabeça, corpo, braço dir, braço esq, perna dir, perna esq, morte
+
+    var imagens = [];
+    //var srcImagens = `Imagens/jogoDaForca_0${contadorTentativas}.jpg`; // AQUI
+
+    function ini(){
+        var botoes = document.getElementsByClassName('btn');
+
+        // inicializar o vetor de imagens... 7 imagens
+        for(var i=0; i<8; i++){
+            imagens[i] = `Imagens/jogoDaForca_0${i}.jpg`;
+            console.log(imagens[i]);
+        }
+
+        for( var i=0 ; i<botoes.length ; i++){
+            botoes[i].addEventListener("click",function(){
+                var aux = this.value; // pega a letra do alfabeto pelo nome do btn
+                this.disabled = true; // desabilita o botão / letra
+                tentativa(aux);
+            });
+        }
+
+        selecionarPalavra();
+
+    }
+
+    function tentativa(letra){
+
+        var acertou = false;
+
+        console.log(`TENTATIVA = palavra secreta : ${palavraSecreta}`);
+
+        // testar todos os caracteres um a um
+        for(var i=0 ; i<palavraSelecionada.length ; i++){
+            if(palavraSelecionada[i] == letra){
+                console.log(`acertou : i= ${i}  letra= ${palavraSelecionada[i]}`);
+                // atualizar a palavra secreta.
+                palavraSecreta[i] = letra;
+                acertou = true;
+                // se acertar atualiza a tela e nao aumenta o contador
+            }
+        }
+
+        // testa se o jogo terminou. derrota ou vitoria ou continua.
+        if(acertou == false){
+            // ERROU A LETRA
+            contadorTentativas ++;
+            alterarImagem();
+            if(contadorTentativas == contadorTentativasMAX){
+                fimDoJogo("QUE PENA, VOCÊ PERDEU!");
+                //document.reload();
+            }
+        }
+        else{
+            //
+            // ACERTOU A LETRA
+            // atualizar interface
+            console.log("Atualizando : "+palavraSecreta);
+            var pPalavra = document.querySelector("#palavra");
+            pPalavra.innerText = palavraSecreta;
+            
+            if(testarSeFimDoJogo() == true){
+                fimDoJogo("PARABÉNS VOCÊ GANHOU!");
+            }
+        }
+
+    }
+
+    // se o jogador acertou todas as letras a funct retorna TRUE
+    function testarSeFimDoJogo(){
+
+        for(var i=0 ; i<palavraSelecionada.length ; i++){
+            if(palavraSecreta[i] != palavraSelecionada[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // função que finaliza o jogo, exibe uma mensagem para o jogador, e oculta o teclado.
+    function fimDoJogo(mensagem){
+
+        var botoes = document.getElementsByClassName('btn');
+        // oculta todas as letras
+        for( var i=0 ; i<botoes.length ; i++){
+            botoes[i].disabled = true;
+        }
+        // cria um novo botão com a mensagem de vitoria ou derrota
+        // se clicar no botao recarrega a página
+        var divPai = document.querySelector("#divMeio");
+        var novaMensagem = document.createElement("p");
+        novaMensagem.innerText = `${mensagem}`;
+        divPai.appendChild(novaMensagem);
+    }
+
+    // função que altera a imagem do jogo levando em conta a tentativa atual
+    function alterarImagem(){
+        var novaImagem = document.querySelector("#imagem");
+        novaImagem.setAttribute("src",""+imagens[contadorTentativas]);
+    }
+
+    function selecionarPalavra(){
+        var pPalavra = document.querySelector("#palavra");
+        var pDica = document.querySelector("#dica");
+        var palavraSelecionadaStr; // palavra selecionada em String
+
+        // sorteia qual vai ser o grupo de palavras.
+        var totalLista = lista.length;
+        var listaRandom = parseInt(Math.random() * totalLista);
+        var palavraRandom = parseInt(Math.random()* (lista[listaRandom].palavras.length));
+        palavraSelecionadaStr = lista[listaRandom].palavras[palavraRandom];
+        //
+        console.log(`total de itens da lista = ${totalLista} |  lista[${listaRandom}].palavras[${palavraRandom}]`);
+        console.log(` palavra selecionada =  ${palavraSelecionadaStr}`);
+
+        // converte a palavra selecionada em vetor de caracteres
+        palavraSelecionada = palavraSelecionadaStr.split('');
+        // monta a string da palavra secreta que será exibida na interface
+        for(var i=0 ; i<palavraSelecionada.length ; i++){
+            palavraSecreta[i] = "_";
+        }
+
+        pPalavra.innerText = palavraSecreta; // atribui o vetor na IG - note que ele é exibido na interface com a virgula separando os elementos.
+        pDica.innerText = `DICA: é um(a) ${lista[listaRandom].dica} e possui ${lista[listaRandom].palavras[palavraRandom].length} letras`;
+    }
+    
+    
+    window.addEventListener("load",ini);
+
+</script>
+
+<body class="gallery">
+    <h1> Jogo da Forca</h1>
+    <img src="Imagens/jogoDaForca_00.jpg" id="imagem">
+    <br>
+    <div id="divMeio">
+        <p id="palavra"> P A L A V R A</p>
+        <p id="dica"> dica aqui...</p>
+    </div>
+
+    <br>
+    <div id="teclado">
+        <input type="button" value="A" id="A" class="btn" >
+        <input type="button" value="B" id="B" class="btn" >
+        <input type="button" value="C" id="C" class="btn" >
+        <input type="button" value="D" id="D" class="btn" >
+        <input type="button" value="E" id="E" class="btn" >
+        <input type="button" value="F" id="F" class="btn" >
+        <input type="button" value="G" id="G" class="btn" >
+        <input type="button" value="H" id="H" class="btn" >
+        <input type="button" value="I" id="I" class="btn" >
+        <br>
+        <input type="button" value="J" id="J" class="btn" >
+        <input type="button" value="K" id="K" class="btn" >
+        <input type="button" value="L" id="L" class="btn" >
+        <input type="button" value="M" id="M" class="btn" >
+        <input type="button" value="N" id="N" class="btn" >
+        <input type="button" value="O" id="O" class="btn" >
+        <input type="button" value="P" id="P" class="btn" >
+        <input type="button" value="Q" id="Q" class="btn" >
+        <input type="button" value="R" id="R" class="btn" >
+        <br>
+        <input type="button" value="S" id="S" class="btn" >
+        <input type="button" value="T" id="T" class="btn" >
+        <input type="button" value="U" id="U" class="btn" >
+        <input type="button" value="V" id="V" class="btn" >
+        <input type="button" value="W" id="W" class="btn" >
+        <input type="button" value="X" id="X" class="btn" >
+        <input type="button" value="Y" id="Y" class="btn" >
+        <input type="button" value="Z" id="Z" class="btn" >
+    </div>
+</body>
+</html>
