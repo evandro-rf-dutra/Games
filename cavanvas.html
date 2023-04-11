@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Testando o CANVAS</title>
+
+</head>
+
+<style type="text/css">
+    #gameArea{
+        border: black 1px solid;
+    }
+    .gallery{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+
+<script>
+    var canvas;
+    var contexto;
+
+    var posX = 10;
+    var posY = 10;
+
+    var tamRectX = 50;
+    var tamRectY = 50;
+
+    function ini(){
+
+        canvas = document.getElementById("gameArea");
+        contexto = canvas.getContext('2d');
+
+        contexto.fillStyle = "#00f"; // padrao hexadecimal COR azul
+        contexto.fillRect(posX,posY, tamRectX, tamRectY); // posicao 10 10 e tam 50 50
+
+        contexto.fillRect(posX+50,posY+50,tamRectX,tamRectY);
+
+        // pode utilizar somente a função rect();
+        // pode utilizar somente a função fill();
+        // porém, a função fill desenha todos os elementos de uma só vez com as mesmas config de style
+
+        // DESENHANDO LINHAS
+        contexto.moveTo(100,100); // ponto inicial (x,y)
+        contexto.lineTo(150,150); // ponto final
+        contexto.stroke(); // desenhar a linha
+
+        contexto.moveTo(150,150); // x , Y
+        contexto.lineTo(300,50);
+        contexto.stroke(); 
+
+        // MOVIMENTAÇÃO
+        // utilizar requestAnimationFrame porque possui um desempenho melhor
+
+    }
+
+    window.addEventListener('load',ini);
+
+</script>
+
+<body class="gallery">
+
+    <!-- CANVAS é como se fosse um quadro, é necessário desenhar e limpar para redesenhar -->
+    <!-- vai desenhando na area. por ex: quadrados, circulos e etc, mas para movimentalos é necessário apagar e re-desenhar -->
+
+    <canvas id="gameArea" height="500px" width="500px"> <!-- precisa ser definido aqui a largura e altura -->
+
+    </canvas>
+</body>
+</html>
