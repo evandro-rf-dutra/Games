@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>exemplo 02 de CANVAS</title>
+</head>
+
+<style type="text/css">
+    #gameArea{
+        border: black 1px solid;
+    }
+    .gallery{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+
+<script>
+    var canvas;
+    var contexto;
+
+    var posX = 0;
+    var posY = 0;
+
+    var tamRectX = 50;
+    var tamRectY = 50;
+
+    var salto = 10;
+
+    function ini(){
+
+        canvas = document.getElementById("gameArea");
+        contexto = canvas.getContext('2d');
+
+        contexto.fillStyle = "#00f"; // padrao hexadecimal COR azul
+
+        pintar(); // desenha o retangulo na posicao inicial
+
+        // add os eventos de movimentação
+        document.addEventListener("keydown", (event) => {
+            var tecla = event.keyCode;
+            console.log(`keyCode: ${tecla}`);
+            
+            switch(tecla){
+                case 38:
+                    console.log("cima");
+                    posY -=salto;
+                    pintar();
+                    break;
+                case 40:
+                    console.log("baixo");
+                    posY +=salto;
+                    pintar();
+                    break;
+                case 37:
+                    console.log("esquerda");
+                    posX -=salto;
+                    pintar();
+                    break;
+                case 39:
+                    console.log("direita");
+                    posX +=salto;
+                    pintar();
+                    break;
+                default:
+                    console.log("Esta tecla nao pode ser usada!");
+                    break;
+            }
+        });
+
+
+        // pode utilizar somente a função rect();
+        // pode utilizar somente a função fill();
+        // porém, a função fill desenha todos os elementos de uma só vez com as mesmas config de style
+
+        // MOVIMENTAÇÃO
+        // utilizar requestAnimationFrame porque possui um desempenho melhor
+
+    }
+
+    function pintar(){
+        if(testarLimites() == false){
+            return;
+        }
+        contexto.clearRect(0,0,500,500); // limpa a tela inteira
+        contexto.fillRect(posX,posY, tamRectX, tamRectY); // posicao 10 10 e tam 50 50
+        console.log(`função pintar(){ [x]: ${posX} [y]: ${posY} }`);
+    }
+
+    // se o movimento é válido retorna TRUE.
+    function testarLimites(){
+        if(posY < 0){
+            posY = 0;
+            return false;
+        }
+        if(posX < 0){
+            posX = 0;
+            return false;
+        }
+
+        if(posY > (500 - tamRectY)){
+            posY = (500 - tamRectY);
+            return false;
+        }
+        if(posX > (500 - tamRectX)){
+            posX = (500 - tamRectX);
+            return false;
+        }
+        return true;
+    }
+
+    window.addEventListener('load',ini);
+
+</script>
+
+<body class="gallery">
+
+    <!-- CANVAS é como se fosse um quadro, é necessário desenhar e limpar para redesenhar -->
+    <!-- vai desenhando na area. por ex: quadrados, circulos e etc, mas para movimentalos é necessário apagar e re-desenhar -->
+
+    <canvas id="gameArea" height="500px" width="500px"> <!-- precisa ser definido aqui a largura e altura -->
+
+    </canvas>
+</body>
+</html>
