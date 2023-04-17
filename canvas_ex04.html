@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title> Exemplo 04 - círculos</title>
+</head>
+
+<script>
+
+    var canvas;
+    var contexto;
+
+    var width = 600;
+    var height = 600;
+
+    var x = 30;
+    var y = 30;
+
+    function ini(){
+
+        canvas = document.getElementById("tela");
+        contexto = tela.getContext('2d');
+
+        console.log(`Dimensões da Tela: w: ${width} h: ${height}`);
+
+        var meuInterval = setInterval(desenharCirculo,500);
+
+        document.getElementById("stop").addEventListener('click',()=>{
+            clearInterval(meuInterval);
+            console.log("PAROU!")
+        });
+
+    }
+
+    function desenharCirculo(){
+
+        console.log("desenhando circulo...");
+        
+        let r = (Math.random()*255);
+        let g = (Math.random()*255);
+        let b = (Math.random()*255);
+
+        let raioMin = 20;
+        let raio = (Math.random()*45 + raioMin);
+
+        contexto.beginPath(); // necessário senao dá pau
+        contexto.fillStyle = `rgb(${r},${g},${b})`;
+        contexto.arc(x, y, raio, 0, 2*Math.PI,false);
+        contexto.fill(); // preenchimento do centro
+        contexto.stroke();
+
+        atualizaCoordenadas();
+    }
+
+    function atualizaCoordenadas(){
+        x = (Math.random()*width);
+        y = (Math.random()*height);
+    }
+
+
+    window.addEventListener('load',ini);
+
+</script>
+
+<style>
+    #tela{
+        border-radius: 5%;
+        border: 1px solid black;
+        background-color: white;
+    }
+    body{
+        background-color: gray;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+    }
+    input{
+        height: 40px;
+        width: 60px;
+        margin-top: 5px;
+    }
+    input:hover{
+        height: 40px;
+        width: 60px;
+        margin-top: 5px;
+        background-color: red;
+    }
+</style>
+
+<body>
+    <canvas id="tela" width="600px" height="600px"> </canvas>
+    <input type="button" value="Stop" id="stop">
+</body>
+</html>
