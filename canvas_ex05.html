@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>exemplo de acrTo simples</title>
+</head>
+
+<script>
+
+    var canvas_w = 700;
+    var canvas_h = 700;
+
+    var canvas;
+    var contexto;
+
+    function ini(){
+
+        canvas = document.getElementById('tela');
+        contexto = canvas.getContext('2d');
+        
+        console.log(`Width:${canvas_w} Height:${canvas_h}`);
+
+        desenhar();
+    }
+
+    function desenhar(){
+
+        contexto.beginPath();
+        contexto.fillStyle = 'rgb(255,150,150)';
+        contexto.moveTo(100,100);
+        contexto.lineTo(100,400);
+        //contexto.strokeStyle = 'rgb(100,100,100)';
+        contexto.arcTo(100, 450, 500, 450 , 20);
+        contexto.moveTo(120,450); // 120 porque o raio é 20
+        contexto.lineTo(450,450);
+        //contexto.fill();
+        contexto.stroke();
+
+    }
+
+    window.addEventListener('load',ini);
+
+</script>
+
+<style>
+
+    .tela{
+        /** nao declarar W e H aqui*/
+        background-color: white;
+        border: 1px solid black;
+    }
+    body{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: gray;
+    }
+
+</style>
+
+<body>
+    <!--  Atenção é preciso declarar width e height aqui... senão fica bugado e borado -->
+    <canvas id="tela" class="tela" width="700px" height="700px"> Seu navegador não suporta essa poha </canvas>    
+</body>
+</html>

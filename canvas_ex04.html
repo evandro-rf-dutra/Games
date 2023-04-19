@@ -19,14 +19,19 @@
     var x = 30;
     var y = 30;
 
+    var anguloMin = 0;
+    var anguloMax = 360;
+
+    var flag = 1; // controla o circulo central. primeiro incrementa o angulo central inicial, depois o final
+
     function ini(){
 
         canvas = document.getElementById("tela");
-        contexto = tela.getContext('2d');
+        contexto = canvas.getContext('2d');
 
         console.log(`Dimensões da Tela: w: ${width} h: ${height}`);
 
-        var meuInterval = setInterval(desenharCirculo,500);
+        var meuInterval = setInterval(desenharCirculo,1000); // 1 seg
 
         document.getElementById("stop").addEventListener('click',()=>{
             clearInterval(meuInterval);
@@ -38,21 +43,55 @@
     function desenharCirculo(){
 
         console.log("desenhando circulo...");
-        
-        let r = (Math.random()*255);
-        let g = (Math.random()*255);
-        let b = (Math.random()*255);
+        contexto.clearRect(0,0,height,width); // limpa a tela
+        contexto.lineWidth = 1;
 
-        let raioMin = 20;
-        let raio = (Math.random()*45 + raioMin);
+        for (let index = 0; index < 25; index++) {
+            
+            let r = (Math.random()*255);
+            let g = (Math.random()*255);
+            let b = (Math.random()*255);
 
-        contexto.beginPath(); // necessário senao dá pau
-        contexto.fillStyle = `rgb(${r},${g},${b})`;
-        contexto.arc(x, y, raio, 0, 2*Math.PI,false);
-        contexto.fill(); // preenchimento do centro
-        contexto.stroke();
+            let raioMin = 20;
+            let raio = (Math.random()*45 + raioMin); // sorteia de 1 á 45, + raio mínimo
+            //
+            contexto.beginPath(); // necessário senao dá pau
+            contexto.fillStyle = `rgb(${r},${g},${b})`;
+            contexto.arc(x, y, raio, 0, 2*Math.PI,false);
+            contexto.fill(); // preenchimento do centro
+            contexto.stroke();
 
-        atualizaCoordenadas();
+            atualizaCoordenadas();
+            
+        }
+        // circulo central, testando angulos
+        contexto.beginPath();
+        contexto.fillStyle = '#000';
+        contexto.lineWidth = 5;
+        contexto.arc(width/2, height/2, 40, Math.PI/180*anguloMin, Math.PI/180*anguloMax,false);
+        contexto.stroke(); // so o contorno
+
+        if(flag == 1){ // incrementa o angulo inicial
+
+            if(anguloMin < anguloMax ){ // ate angulo inicial for igual a 360
+                anguloMin += 20;
+            }
+            else {
+                anguloMin = 0;
+                anguloMax = 0;
+                flag = 0;
+            }
+        }
+        else{ // flag 0
+
+            if(anguloMax < 360){
+                anguloMax += 20;
+            }
+            else{
+                flag = 1;
+            }
+        }
+
     }
 
     function atualizaCoordenadas(){
