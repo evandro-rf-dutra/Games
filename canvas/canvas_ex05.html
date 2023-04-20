@@ -48,7 +48,7 @@
         // por isso a 'curva' fica um pouco antes do fim da reta
         contexto.arcTo(100, 401, 500, 401 , 20);
         // linha de baixo
-        contexto.moveTo(121,401); // 120 porque o raio é 20
+        contexto.moveTo(121,401); // 120 porque o raio é 20 - Obs: não precisa chamar novamente moveTo, pode continar a reta com lineTo
         contexto.lineTo(500,401);
         // desenhando o resto do retangulo
         //contexto.fill();

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>exemplo de canvas</title>
+</head>
+
+<style>
+    body{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: aquamarine;
+    }
+    #tela{
+        background-color: white;
+        border: 2px solid black;
+    }
+</style>
+
+<script>
+
+    var canvas;
+    var contexto;
+
+    function ini(){
+        canvas = document.getElementById('tela');
+        contexto = canvas.getContext('2d');
+        
+        desenhar();
+    }
+
+    function desenhar(){
+
+        contexto.beginPath();
+
+        contexto.strokeLine = '#000';
+        contexto.lineWidth = 2;
+
+        // é possivel desenhar quadrados somente usando lineTo, ligando os pontos
+        // não precisa sempre utilizar moveTo. posiciona somente no inicio, depois vai ligando os pontos com lineTo.
+        //
+        contexto.moveTo(100,100); // posiciona no ponto inicial
+        contexto.lineTo(100,300);
+        contexto.lineTo(300,300);
+        contexto.lineTo(300,100);
+        contexto.lineTo(100,100); // vai ligando os pontos utilizando lineTo
+
+        contexto.stroke();
+        //
+        // exemplo com borda redonda - é necessário calcular o fim da reta para dar efeito de borda redonda
+        contexto.beginPath();
+
+        contexto.strokeLine = '#000';
+        contexto.lineWidth = 2;
+
+        contexto.moveTo(100,400);
+        contexto.lineTo(100,550);
+        contexto.arcTo(100,551,300,550,20); // y deve ser 1px ao lado
+        contexto.lineTo(300,550);
+        contexto.arcTo(301,550,300,400,20); // aqui é o x que deve ser deslocado 1px
+        contexto.lineTo(300,400);
+        //contexto.arcTo(300,401,300,550,20);
+        contexto.lineTo(100,400);
+
+        contexto.stroke();
+
+    }
+    
+    window.addEventListener('load',ini);
+
+</script>
+
+<body>
+    <canvas id="tela" height="800px" width="800px"> O seu navegador não suporta o canvas </canvas>
+    
+</body>
+</html>
