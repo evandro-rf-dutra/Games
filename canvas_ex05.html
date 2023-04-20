@@ -28,17 +28,51 @@
 
     function desenhar(){
 
+        var x1 = 100;
+        var x2 = 100;
+        var y1 = 100;
+        var y2 = 100;
+
+        desenharArc(100,100); // servem para marcar os pontos da reta e do arcTo
+        desenharArc(100,400);
+        //
+        //
+        //contexto.strokeStyle = 'rgb(100,100,100)';
         contexto.beginPath();
-        contexto.fillStyle = 'rgb(255,150,150)';
+        contexto.strokeLine = '#000';
+        contexto.lineWidth = 2;
         contexto.moveTo(100,100);
         contexto.lineTo(100,400);
-        //contexto.strokeStyle = 'rgb(100,100,100)';
-        contexto.arcTo(100, 450, 500, 450 , 20);
-        contexto.moveTo(120,450); // 120 porque o raio é 20
-        contexto.lineTo(450,450);
+        // obs: sempre a linha do arcTo deve ser um px maior que da reta senao dá errado
+        // arcTo forma um angulo entre duas retas, mas não partindo do fim da reta
+        // por isso a 'curva' fica um pouco antes do fim da reta
+        contexto.arcTo(100, 401, 500, 401 , 20);
+        // linha de baixo
+        contexto.moveTo(121,401); // 120 porque o raio é 20
+        contexto.lineTo(500,401);
+        // desenhando o resto do retangulo
         //contexto.fill();
         contexto.stroke();
 
+    }
+
+    // origem, destino e a cor
+    function desenharLinha(x,y, x2,y2, cor){
+        contexto.beginPath();
+        contexto.strokeLine = cor;
+        contexto.lineWidth = 2;
+        contexto.moveTo(x,y);
+        contexto.lineTo(x2,y2);
+        contexto.stroke();
+        
+    }
+
+    function desenharArc(x,y){
+        let raio = 10;
+        contexto.beginPath();
+        contexto.fillStyle = 'rgb(255,150,150)';
+        contexto.arc(x,y, raio, 0, Math.PI*2);
+        contexto.fill();
     }
 
     window.addEventListener('load',ini);
