@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>exemplo do urso</title>
+</head>
+
+<script>
+    //
+    var canvas;
+    var contexto;
+    var urso;
+
+    var canvas_w = 800;
+    var canvas_h = 600;
+
+    var numeroDeSprites = 6;
+    var tamCorteSprite_w = 650; 
+    var tamCorteSprite_h = 1200; 
+
+    var x = 0;
+    var y = 0;
+
+    var contador = 1;
+
+    async function ini(){
+        canvas = document.getElementById('tela');
+        contexto = canvas.getContext('2d');
+
+        urso = new Image();
+        urso.src = 'spritesheet/numeros.jpg';
+
+        urso.addEventListener('load',()=>{
+            console.log('urso carregou');
+            animaUrso();
+        });
+
+        document.getElementById('botao').addEventListener('click',()=>{
+            console.log('clicou');
+            console.log(` contador = ${contador} : x = ${x} : y = ${y}`)
+            // troca o corte da imagem
+            if(contador < 6){
+                x += 50;
+                contador ++;
+            }
+            else{
+                x = 0;
+                contador = 1;
+            }
+            animaUrso();
+        });
+
+    }
+
+    function animaUrso(){
+        //
+        // parametros = imagem, corte_x, corte_y, corteFim_x, corteFim_y, pos_x, pos_y, e tamanho da imagem
+        contexto.drawImage(urso,x,y,50,50,200,200,100,100);
+        //
+        console.log('animaUrso');
+        //
+    }
+
+    window.addEventListener('load',ini);
+
+</script>
+
+<style>
+    body{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .tela{
+        border: 1px solid black;
+    }
+    #botao{
+        height: 50px;
+        width: 100px;
+        background-color: aquamarine;
+    }
+</style>
+
+<body>
+
+    <input type="button" id="botao" value="clique aqui">
+
+    <canvas id="tela" class="tela" width="800px" height="600px"> 
+        Seu navegador não tem suporte para canvas!
+    </canvas>
+    
+</body>
+</html>
