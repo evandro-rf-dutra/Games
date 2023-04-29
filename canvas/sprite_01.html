@@ -4,37 +4,33 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>exemplo do urso</title>
+    <title>exemplo do sprite</title>
 </head>
 
 <script>
     //
     var canvas;
     var contexto;
-    var urso;
+    var sprite;
 
-    var canvas_w = 800;
-    var canvas_h = 600;
+    var numeroDeSprites = 6; 
 
-    var numeroDeSprites = 6;
-    var tamCorteSprite_w = 650; 
-    var tamCorteSprite_h = 1200; 
-
+    // posição do corte
     var x = 0;
     var y = 0;
 
-    var contador = 1;
+    var contador = 1; // para controlar a troca de imagens
 
     async function ini(){
         canvas = document.getElementById('tela');
         contexto = canvas.getContext('2d');
 
-        urso = new Image();
-        urso.src = 'spritesheet/numeros.jpg';
+        sprite = new Image();
+        sprite.src = 'spritesheet/numeros.jpg';
 
-        urso.addEventListener('load',()=>{
-            console.log('urso carregou');
-            animaUrso();
+        sprite.addEventListener('load',()=>{
+            console.log('sprite carregou');
+            animasprite();
         });
 
         document.getElementById('botao').addEventListener('click',()=>{
@@ -49,17 +45,19 @@
                 x = 0;
                 contador = 1;
             }
-            animaUrso();
+            animasprite();
         });
 
     }
 
-    function animaUrso(){
+    function animasprite(){
         //
-        // parametros = imagem, corte_x, corte_y, corteFim_x, corteFim_y, pos_x, pos_y, e tamanho da imagem
-        contexto.drawImage(urso,x,y,50,50,200,200,100,100);
+        // parametros = imagem, corte_x, corte_y, largura_corte, altura_corte, pos_x, pos_y, e largura e altura da imagem
+        // o corte da imagem é feito na src=´´
+        // pos_x e pos_y são as coordenadas do canvas onde será exibida a imagem 
+        contexto.drawImage(sprite,x,y,50,50,200,200,100,100);
         //
-        console.log('animaUrso');
+        console.log('animasprite');
         //
     }
 
