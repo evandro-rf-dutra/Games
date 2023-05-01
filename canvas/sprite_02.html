@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite Gohan</title>
+</head>
+
+<script>
+    
+    var canvas;
+    var contexto;
+
+    var canvas_h = 600;
+    var canvas_w = 600;
+
+    var numSprites = 11;
+    var spriteAtual = 1;
+
+    var gohan;
+
+    function desenha(){
+
+        console.log('Método Desenha');
+        limparTela();
+
+        let largura_gohan = Number.parseInt(gohan.width / numSprites); // arredondando para inteiro, ja que o valor é float para esta imagem
+
+        console.log(`Largura de cada Sprite ${largura_gohan}`);
+        contexto.drawImage(gohan, largura_gohan*spriteAtual, 0, largura_gohan,gohan.height, 100, 100, largura_gohan, gohan.height);
+
+        spriteAtual++;
+        if(spriteAtual == 11){
+            spriteAtual = 0;
+        }
+    }
+    function limparTela(){
+        contexto.clearRect(0,0,canvas_h,canvas_w);
+    }
+
+    function ini(){
+        canvas = document.getElementById('tela');
+        contexto = canvas.getContext('2d');
+
+        gohan = new Image();
+        gohan.src = 'spritesheet/Gohan_01.png';
+
+        gohan.addEventListener('load',()=>{
+            console.log(`Altura ${gohan.height} Largura: ${gohan.width}`); // precisa aguardar o carregamento da imagem
+            desenha();
+        });
+            
+    }
+
+    window.addEventListener('load',ini);
+
+</script>
+
+<style>
+    body{
+        background-color: chocolate;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .tela{
+        background-color: white;
+        border: 1px solid black;
+    }
+    h1{
+        font-size: large;
+        font-family: 'Courier New', Courier, monospace;
+    }
+</style>
+
+<body>
+    <h1>
+        Gohan
+    </h1>
+    <canvas id="tela" class="tela" height="600px" width="600px"> O seu navegador não suporta o canvas!</canvas>    
+</body>
+</html>
