@@ -11,12 +11,13 @@
     
     var canvas;
     var contexto;
+    var botao;
 
     var canvas_h = 600;
     var canvas_w = 600;
 
     var numSprites = 11;
-    var spriteAtual = 1;
+    var spriteAtual = 0;
 
     var gohan;
 
@@ -25,31 +26,41 @@
         console.log('Método Desenha');
         limparTela();
 
-        let largura_gohan = Number.parseInt(gohan.width / numSprites); // arredondando para inteiro, ja que o valor é float para esta imagem
+        //let largura_gohan = Math.floor(gohan.width / numSprites);
+        let largura_gohan = gohan.width / numSprites;
+        //let largura_gohan = 39;
 
         console.log(`Largura de cada Sprite ${largura_gohan}`);
-        contexto.drawImage(gohan, largura_gohan*spriteAtual, 0, largura_gohan,gohan.height, 100, 100, largura_gohan, gohan.height);
+        console.log(`calculo largura inicial do corte ${(spriteAtual*largura_gohan)}`);
+        contexto.drawImage(gohan, spriteAtual*largura_gohan, 0, largura_gohan, gohan.height, 200, 200, 200, 200);
 
         spriteAtual++;
-        if(spriteAtual == 11){
+        if(spriteAtual == numSprites){
             spriteAtual = 0;
         }
     }
     function limparTela(){
         contexto.clearRect(0,0,canvas_h,canvas_w);
+        console.log('limpou a tela');
     }
 
     function ini(){
         canvas = document.getElementById('tela');
         contexto = canvas.getContext('2d');
 
+        botao = document.getElementById('botao');
+        botao.addEventListener('click',()=>{
+            desenha()
+            });
+
         gohan = new Image();
-        gohan.src = 'spritesheet/Gohan_01.png';
+        gohan.src = 'spritesheet/gohan_golpe_02.png';
 
         gohan.addEventListener('load',()=>{
             console.log(`Altura ${gohan.height} Largura: ${gohan.width}`); // precisa aguardar o carregamento da imagem
             desenha();
         });
+
             
     }
 
@@ -78,6 +89,8 @@
     <h1>
         Gohan
     </h1>
-    <canvas id="tela" class="tela" height="600px" width="600px"> O seu navegador não suporta o canvas!</canvas>    
+    <canvas id="tela" class="tela" height="600px" width="600px"> O seu navegador não suporta o canvas!</canvas> 
+
+    <input type="button" value="Golpear" id="botao">
 </body>
 </html>
