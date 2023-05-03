@@ -25,7 +25,7 @@
         position: absolute;
         left: 50%;
         transform: translate(-50%,-50%);
-        /** ele declarou aqui a altura e largura... pode ficar meio bugado declarar aqui */
+        /** declarado aqui a altura e largura... pode ficar meio bugado declarar aqui */
         height:600px;
         width:600px;
     }
@@ -34,17 +34,27 @@
         flex-direction: column;
         align-items: center;
     }
+    label,select{
+        font-family:'Courier New', Courier, monospace;
+        font-size: large;
+    }
 </style>
 
 <body>
     <div>
-        <input type="button" value="  1  " id="btn1" class="btn"/>
-        <input type="button" value="  2  " id="btn2" class="btn"/>
-        <input type="button" value="  3  " id="btn3" class="btn"/>
-        <input type="button" value="  4  " id="btn4" class="btn"/>
-        <input type="button" value="  5  " id="btn5" class="btn"/>
-        <input type="button" value="  6  " id="btn6" class="btn"/>
-        <input type="button" value="  7  " id="btn7" class="btn"/>
+        <label for="animation"><b> Select Animation: </b></label>
+        <select name="animation" id="animation">
+            <option value="idle" selected> Idle </option>
+            <option value="jump"> Jump </option>
+            <option value="fall"> Fall </option>
+            <option value="run"> Run </option>
+            <option value="dizzy"> Dizzy </option>
+            <option value="sit"> Sit </option>
+            <option value="roll"> Roll </option>
+            <option value="bite"> Bite </option>
+            <option value="ko"> K.O. </option>
+            <option value="gethit"> GetHit </option>
+        </select>
     </div>
 
     <canvas id="canvas1" class="canvas1" > <!-- mudei o W e H daqui -->
@@ -70,20 +80,56 @@
     const spriteWidth = 575;
     const spriteHeight = 523;
 
-    let frameX = 0; // linha do corte na src
-    let frameY = 8; // coluna
+    let frameX = 0; // coluna do corte na src
+    let frameY = 0; // linha que corresponde a animação
 
     let gameSlow = 0;
     let timeSlow = 5; // quanto maior este número mais lento fica a troca de sprites
 
-    // cada posição do vetor diz respeito ao número de sprites por linha. o tamanho de todos sprites é igual, porém só varia o numero deles por linha.
-    let spriteNumberWidth = [7,7,7,9,11,5,7,7,12,4];
-
-    // apenas com um animation frame funciona também, mas eu optei em fazer desta forma
-    playerImage.addEventListener('load',()=>{
-            animate();
+    // cada posição do vetor armazena o número de sprites por linha e o nome da animação.
+    // O tamanho (w,h) de todos sprites é igual, porém só varia o numero deles por linha.
+    let spriteNumberWidth = [
+        {
+            frames:7,
+            name:'idle'
+        },
+        {
+            frames:7,
+            name:'jump'
+        },
+        {
+            frames:7,
+            name:'fall'
+        },
+        {
+            frames:9,
+            name:'run'
+        },
+        {
+            frames:11,
+            name:'dizzy'
+        },
+        {
+            frames:5,
+            name:'sit'
+        },
+        {
+            frames:7,
+            name:'roll'
+        },
+        {
+            frames:7,
+            name:'bite'
+        },
+        {
+            frames:12,
+            name:'ko'
+        },
+        {
+            frames:4,
+            name:'gethit'
         }
-    );
+    ];
 
     function animate(){
         //
@@ -95,7 +141,7 @@
         // é necessário criar um método para forçar um slow na animação, senão fica a troca de frames (sprites) ficará muito rápida
         if( (gameSlow % timeSlow) == 0){ // se der módulo 0
 
-            if(frameX < spriteNumberWidth[frameY]-1) frameX++; // necessário tratar o numero max de frameX
+            if(frameX < spriteNumberWidth[frameY].frames -1) frameX++; // necessário tratar o numero max de frameX
             else frameX = 0;
         }
         gameSlow++;
@@ -103,7 +149,26 @@
         
     };
 
-    //animate();
+
+    // EVENTOS
+    // apenas com um animation frame funciona também, mas eu optei em fazer desta forma
+    playerImage.addEventListener('load',()=>{
+            animate();
+        }
+    );
+
+    var select = document.getElementById('animation');
+
+    select.addEventListener('change', function(e){
+        let retorno = e.target.value;
+        console.log(`Evento do select: ${retorno}`);
+
+        for(let i=0 ; i< (spriteNumberWidth.length); i++){
+            if(spriteNumberWidth[i].name == retorno){
+                frameY = i;
+            }
+        }
+    });
 
 
 </script>
