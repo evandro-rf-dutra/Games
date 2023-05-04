@@ -1,0 +1,173 @@
+<!-- Curso canvas CFB. aula 13-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> Exercicio. base para movimento em jogos 2d</title>
+</head>
+
+<style>
+
+    #canvas1{
+
+        width: 600px;
+        height: 600px;
+
+        border: 1px solid black;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+
+</style>
+
+<body>
+
+    <canvas id="canvas1" class="canvas1"> ERRO! </canvas>
+    
+</body>
+
+<script>
+
+    const canvas = document.getElementById('canvas1');
+    const  ctx = canvas.getContext('2d');
+
+    const CANVAS_WIDTH = canvas.width = 600;
+    const CANVAS_HEIGHT = canvas.height = 600;
+
+    var position = { x: 0, y: 0,
+                     dir_up: false,
+                     dir_down: false,
+                     dir_r: false,
+                     dir_l: false
+                    };
+    var p_w = 50;
+    var p_h = 50;
+
+    const vel = 10; // velocidade do movimento, no caso 10 px
+
+    window.addEventListener('keydown', function(e){
+        keyDown(e.keyCode); // KEYCODE função ou atributo ?
+    });
+    window.addEventListener('keyup', function(e){
+        keyUp(e.keyCode); // KEYCODE função ou atributo ?
+    });
+
+    function animate(){
+        console.log('exec animate');
+        refresh_position();
+        clear();
+        draw();
+        requestAnimationFrame(animate);
+    }
+
+    function draw(){
+        // desenha o retangulo
+        ctx.fillStyle = "#BDB76B"; // padrao hexadecimal.. COR dentro do rect
+        ctx.lineWidth = 4; // largura do contorno
+        ctx.strokeRect(position.x, position.y, p_w, p_h); // contorno no retangulo
+        ctx.fillRect(position.x, position.y, p_w, p_h);
+    }
+
+    function clear(){
+        ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+    }
+
+    // testa se o movimento esta dentro das dimensões do canvas
+    // recebe as coordenadas x e y para onde o quadrado quer mover
+    // retorna true se o movimento é valido.
+    function isValid(x, y){
+
+        if(y < 0 || y > CANVAS_HEIGHT - p_h){
+            return false;
+        }
+        if(x < 0 || x > CANVAS_WIDTH - p_w){
+            return false;
+        }
+
+        console.log(`movimento válido ${x} - ${y}`);
+        return true;
+
+    }
+
+    // atualiza as coordenadas do quadrado se o movimento for valido.
+    function refresh_position(){
+
+        if( position.dir_up == true){
+            if(isValid(position.x, position.y - vel) == true) {
+                position.y -=  vel;
+            }
+        }
+        if( position.dir_down == true){
+            if(isValid(position.x, position.y + vel) == true){
+                position.y +=  vel;
+            }
+        }
+        if( position.dir_r == true){
+            if(isValid(position.x + vel, position.y) == true){
+                position.x +=  vel;
+            }
+        }
+        if( position.dir_l == true){
+            if(isValid(position.x - vel, position.y) == true){
+                position.x -=  vel;
+            }
+        }
+
+    }
+
+    // pressionar a tecla
+    function keyDown(move){
+
+        //console.log('KEY DOWN EVENT');
+        //console.log(position);
+
+        switch(move){
+            case 38: // cima
+                position.dir_up = true;
+                break;
+            case 40: //baixo
+                position.dir_down = true;
+                break;
+            case 39: // direita
+                position.dir_r = true;
+                break;
+            case 37: // esq
+                position.dir_l = true;
+                break;
+        }
+    }
+
+    // quando soltar a tecla
+    function keyUp(move){
+        
+        //console.log(position);
+
+        switch(move){
+            case 38: // cima
+                position.dir_up = false;
+                break;
+            case 40: //baixo
+                position.dir_down = false;
+                break;
+            case 39: // direita
+                position.dir_r = false;
+                break;
+            case 37: // esq
+                position.dir_l = false;
+                break;
+        }
+    }
+
+    // start
+    animate();
+
+</script>
+
+</html>
