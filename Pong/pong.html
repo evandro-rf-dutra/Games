@@ -1,0 +1,212 @@
+<!-- Curso de canvas CFB. Exercício: desenvolver o jogo PONG -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <script src="Boll.js"></script>
+    <script src="Player.js"></script>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> Game clássico Pong</title>
+</head>
+
+<style>
+
+    #canvas1{
+
+        width: 800px;
+        height: 600px;
+        background-color: black;
+
+        border-left: 3px solid black;
+        border-right: 3px solid black;
+        border-bottom: 5px solid green;
+        border-top: 5px solid green;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+
+</style>
+
+<body>
+
+    <canvas id="canvas1" class="canvas1"> ERRO! </canvas>
+    
+</body>
+
+<script>
+
+    const canvas = document.getElementById('canvas1');
+    const  ctx = canvas.getContext('2d');
+
+    const CANVAS_WIDTH = canvas.width = 800;
+    const CANVAS_HEIGHT = canvas.height = 600;
+
+
+    window.addEventListener('keydown', function(e){
+        keyDown(e.keyCode);
+    });
+    window.addEventListener('keyup', function(e){
+        keyUp(e.keyCode);
+    });
+
+    const boll = new Boll();
+    const player1 = new Player();
+    const player2 = new Player();
+    ini();
+
+    // configura o inicio do jogo
+    // posiciona os jogadores e a bola em suas respectivas posições inicias
+    function ini(){
+        //
+        boll.x = canvas.width/2 - boll.width/2;
+        boll.y = canvas.height/2 - boll.height/2;
+        boll.direction.x = 1; // começa para direita
+        boll.direction.y = 1;
+        //
+        player1.x = 0;
+        player1.y = (canvas.height/2 - player1.height /2);
+        //
+        player2.x = canvas.width - player2.width;
+        player2.y = (canvas.height/2 - player2.height /2);
+        player2.color = "#E9967A";
+    }
+
+    function animate(){
+        console.log('animate');
+        refresh_player_position(); // posicao do jogador
+        refresh_boll_position(); // atualiza a posição da bola
+        clear();
+        drawCenterLine();
+        player1.draw(ctx); // desenha o jogador
+        player2.draw(ctx);
+        boll.draw(ctx);
+        requestAnimationFrame(animate);
+    }
+
+    // linha que divide o campo
+    function drawCenterLine(){
+        //
+        ctx.beginPath();
+        ctx.strokeStyle = "#C0C0C0"; // padrao hexadecimal.. COR dentro do rect
+        ctx.lineWidth = 2; // largura do contorno
+        ctx.moveTo(CANVAS_WIDTH/2,0);
+        ctx.lineTo(CANVAS_WIDTH/2,CANVAS_HEIGHT);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function clear(){
+        ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+    }
+
+    // testa se o movimento esta dentro das dimensões do canvas
+    // recebe a coordenada y para onde o quadrado quer mover
+    // retorna true se o movimento é valido.
+    function player_colision(y){
+
+        if(y < 0 || y > CANVAS_HEIGHT - player1.height){
+            return false;
+        }
+
+        console.log(`movimento válido 0 - ${y}`);
+        return true;
+
+    }
+
+    // atualiza as coordenadas do quadrado se o movimento for valido.
+    function refresh_player_position(){
+
+        if( player1.direction.up == true){
+            if(player_colision(player1.y - player1.vel) == true) {
+                player1.y -=  player1.vel;
+            }
+        }
+        if( player1.direction.down == true){
+            if(player_colision(player1.y + player1.vel) == true){
+                player1.y +=  player1.vel;
+            }
+        }
+
+        // TESTAR POSICAO DO PLAYER 2 - PLAYER 2 VAI SER CONTROLADO PELO PC
+
+    }
+
+    function refresh_boll_position(){
+
+        boll_colision();
+        boll.x += boll.direction.x * boll.vel;
+        boll.y += boll.direction.y * boll.vel;
+
+    }
+
+    function boll_colision(){
+
+        // colisao da boll contra a parede
+        if(boll.x >= canvas.width - boll.width){
+            boll.direction.x = -1;
+        }
+        if(boll.x <= 0){ // margem esquerda
+            boll.direction.x = 1;
+        }
+        if(boll.y <= 0){
+            boll.direction.y = 1;
+        }
+        if(boll.y >= canvas.height - boll.height){
+            boll.direction.y = -1;
+        }
+
+        // colisao da bola contra o player
+        //
+        if(player1.x + player1.width >= boll.x && player1.y <= boll.y + boll.height && player1.y + player1.height >= boll.y){ // margem esquerda
+            boll.direction.x = 1;
+        }
+
+    }
+
+    // pressionar a tecla
+    function keyDown(move){
+
+        //console.log('KEY DOWN EVENT');
+        //console.log(position);
+        // UTILIZANDO OUTRA LÓGICA AQUI PARA TESTAR
+
+        switch(move){
+            case 38: // cima
+                player1.direction.up = true;
+                break;
+            case 40: //baixo
+                player1.direction.down = true;
+                break;
+        }
+    }
+
+    // quando soltar a tecla
+    function keyUp(move){
+        
+        //console.log(position);
+
+        switch(move){
+            case 38: // cima
+                player1.direction.up = false;
+                break;
+            case 40: //baixo
+                player1.direction.down = false;
+                break;
+        }
+    }
+
+    // start
+    animate();
+
+</script>
+
+</html>
