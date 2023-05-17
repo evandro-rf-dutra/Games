@@ -12,26 +12,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title> Game clássico Pong</title>
+    <title> Pong Game </title>
 </head>
 
 <style>
 
     #canvas1{
-
         width: 800px;
         height: 600px;
         background-color: black;
-
         border-left: 3px solid black;
         border-right: 3px solid black;
         border-bottom: 5px solid green;
         border-top: 5px solid green;
-
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%,-50%);
+    }
+    #btn{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 200px;
+        height: 60px;
+        border-radius: 10px;
+    }
+    #btn:hover{
+        background-color: greenyellow;
+        color: darkgray;
+        font-size: large;
     }
 
 </style>
@@ -39,10 +50,14 @@
 <body>
 
     <canvas id="canvas1" class="canvas1"> ERRO! </canvas>
+    <input type="button" id="btn" value=" Start ">
+    
     
 </body>
 
 <script>
+
+    const btn_play = document.getElementById('btn');
 
     const canvas = document.getElementById('canvas1');
     const  ctx = canvas.getContext('2d');
@@ -57,10 +72,16 @@
     window.addEventListener('keyup', function(e){
         keyUp(e.keyCode);
     });
+    btn_play.addEventListener('click', function(){
+        console.log('Start Game =D');
+        // start game
+        animate();
+        this.remove();
+    });
 
     const boll = new Boll();
     const player1 = new Player();
-    const player2 = new Player();
+    const npcPlayer = new Player();
     ini();
 
     // configura o inicio do jogo
@@ -75,19 +96,20 @@
         player1.x = 0;
         player1.y = (canvas.height/2 - player1.height /2);
         //
-        player2.x = canvas.width - player2.width;
-        player2.y = (canvas.height/2 - player2.height /2);
-        player2.color = "#E9967A";
+        npcPlayer.x = canvas.width - npcPlayer.width;
+        npcPlayer.y = (canvas.height/2 - npcPlayer.height /2);
+        npcPlayer.color = "#E9967A";
     }
 
     function animate(){
         console.log('animate');
         refresh_player_position(); // posicao do jogador
         refresh_boll_position(); // atualiza a posição da bola
+        refresh_npcPlayer_position();
         clear();
         drawCenterLine();
         player1.draw(ctx); // desenha o jogador
-        player2.draw(ctx);
+        npcPlayer.draw(ctx);
         boll.draw(ctx);
         requestAnimationFrame(animate);
     }
@@ -109,11 +131,11 @@
     }
 
     // testa se o movimento esta dentro das dimensões do canvas
-    // recebe a coordenada y para onde o quadrado quer mover
-    // retorna true se o movimento é valido.
-    function player_colision(y){
+    // recebe a coordenada y para onde o quadrado quer mover e a altura do player
+    // retorna TRUE se o movimento é valido.
+    function player_colision(y, height){
 
-        if(y < 0 || y > CANVAS_HEIGHT - player1.height){
+        if(y < 0 || y > CANVAS_HEIGHT - height){
             return false;
         }
 
@@ -122,22 +144,57 @@
 
     }
 
-    // atualiza as coordenadas do quadrado se o movimento for valido.
+    // atualiza as coordenadas do jogador se o movimento for válido.
     function refresh_player_position(){
 
         if( player1.direction.up == true){
-            if(player_colision(player1.y - player1.vel) == true) {
+            if(player_colision(player1.y - player1.vel, player1.height) == true) {
                 player1.y -=  player1.vel;
             }
         }
         if( player1.direction.down == true){
-            if(player_colision(player1.y + player1.vel) == true){
+            if(player_colision(player1.y + player1.vel, player1.height) == true){
                 player1.y +=  player1.vel;
             }
         }
 
-        // TESTAR POSICAO DO PLAYER 2 - PLAYER 2 VAI SER CONTROLADO PELO PC
+    }
 
+    function refresh_npcPlayer_position(){ // ARRUMAR ISSO AQUI PARA IR EXATAMENTE NA POSICAO DA BOLA
+
+        // se a bola estiver indo para a direita
+        // se a bola passou do meio
+        // então começa a ir atrás dela
+        if( (boll.x > CANVAS_WIDTH / 2) && (boll.direction.x  == 1) ){
+            // se o meio da bola tiver o y maior, que o meio do pad do npc, vai para baixo y+=
+            // se o meio da bola tiver y menor que o meio do pad do npc então vai para cima y-=
+            if( (boll.y + boll.height / 2) > (npcPlayer.y + npcPlayer.height/2) ){
+                // PC VAI PARA BAIXO
+                if( player_colision(npcPlayer.y + npcPlayer.vel, npcPlayer.height) == true){
+                    npcPlayer.y +=  npcPlayer.vel;
+                }
+            }
+            else if( (boll.y + boll.height / 2) < (npcPlayer.y + npcPlayer.height/2)){
+                // PC VAI PARA CIMA
+                if( player_colision(npcPlayer.y - npcPlayer.vel, npcPlayer.height) == true){
+                    npcPlayer.y -=  npcPlayer.vel;
+                }
+            }
+        }
+        // se a bola estiver indo para esquerda começa a voltar para o meio
+        else if(boll.direction.x == -1){
+            if( npcPlayer.y > CANVAS_HEIGHT / 2 - npcPlayer.height / 2){ // CRIAR FUNCAO GENERICA
+                //if(player_colision(npcPlayer.y - npcPlayer.vel) == true) {
+                    npcPlayer.y -=  npcPlayer.vel;
+                //}
+            }
+            if( npcPlayer.y < CANVAS_HEIGHT / 2 - npcPlayer.height / 2){
+                //if(player_colision(npcPlayer.y + npcPlayer.vel) == true){
+                    npcPlayer.y +=  npcPlayer.vel;
+                //}
+            }
+
+        }
     }
 
     function refresh_boll_position(){
@@ -164,11 +221,20 @@
             boll.direction.y = -1;
         }
 
-        // colisao da bola contra o player
+        // colisao da bola contra o player   TENTAR FAZER ESSA PARTE DE COLISÃO GENERICA PARA QLQR PLAYER
         //
-        if(player1.x + player1.width >= boll.x && player1.y <= boll.y + boll.height && player1.y + player1.height >= boll.y){ // margem esquerda
-            boll.direction.x = 1;
+        if(boll.x <= player1.x + player1.width && boll.x + boll.width >= player1.x 
+            && boll.y <= player1.y + player1.height && boll.y + boll.height >= player1.y ){ // margem esquerda
+                boll.direction.x = 1;
+                console.log('COLISÃO da bola com o Player');
         }
+        else if(boll.x <= npcPlayer.x + npcPlayer.width && boll.x + boll.width >= npcPlayer.x 
+            && boll.y <= npcPlayer.y + npcPlayer.height && boll.y + boll.height >= npcPlayer.y ){ // margem esquerda
+                boll.direction.x = -1;
+                console.log('COLISÃO da bola com o npc_Player');
+        }
+        //
+        // FAZER CALCULO DA DIREÇÃO DA BOLA... DIVISÃO PELO NUMERO DE ÁREAS
 
     }
 
@@ -205,7 +271,7 @@
     }
 
     // start
-    animate();
+    //animate();
 
 </script>
 
