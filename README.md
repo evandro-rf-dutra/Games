@@ -1,2 +1,2 @@
 # Games
-Games desenvolvidos em html css .js
+Games desenvolvidos em html <canvas> e JavaScript.
