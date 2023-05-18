@@ -9,6 +9,7 @@ class Player{
         this.borderLine = 4;
         //
         this.vel = 10; // 10 px
+        this.division = 16; // o pad do jogador terá 16 áreas de colisao. quanto maior o numero mais variações de movimento
         //
         this.direction = { // testando outra lógica.. mas aqui deveria ser aritmetica *(+1) e *(-1)
             up: false,

@@ -23,8 +23,8 @@
         background-color: black;
         border-left: 3px solid black;
         border-right: 3px solid black;
-        border-bottom: 5px solid green;
-        border-top: 5px solid green;
+        border-bottom: 5px solid #00FF7F;
+        border-top: 5px solid #00FF7F;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -64,6 +64,9 @@
 
     const CANVAS_WIDTH = canvas.width = 800;
     const CANVAS_HEIGHT = canvas.height = 600;
+
+    var player_points = 0;
+    var npcPlayer_points = 0;
 
 
     window.addEventListener('keydown', function(e){
@@ -111,14 +114,24 @@
         player1.draw(ctx); // desenha o jogador
         npcPlayer.draw(ctx);
         boll.draw(ctx);
+        drawScoreboard();
         requestAnimationFrame(animate);
+    }
+
+    function drawScoreboard(){
+        ctx.beginPath();
+        ctx.font = '50px Verdana';
+        ctx.fillStyle = '#4F4F4F';
+        ctx.fillText(`${player_points}`, CANVAS_WIDTH/2 - 80 , 100);
+        ctx.fillText(`${npcPlayer_points}`, CANVAS_WIDTH/2 + 50 , 100);
+        ctx.closePath();
     }
 
     // linha que divide o campo
     function drawCenterLine(){
         //
         ctx.beginPath();
-        ctx.strokeStyle = "#C0C0C0"; // padrao hexadecimal.. COR dentro do rect
+        ctx.strokeStyle = '#C0C0C0';
         ctx.lineWidth = 2; // largura do contorno
         ctx.moveTo(CANVAS_WIDTH/2,0);
         ctx.lineTo(CANVAS_WIDTH/2,CANVAS_HEIGHT);
@@ -202,40 +215,80 @@
         boll_colision();
         boll.x += boll.direction.x * boll.vel;
         boll.y += boll.direction.y * boll.vel;
+        console.log(` direction.x: ${boll.direction.x} - direction.y: ${boll.direction.y} = [x:${boll.x}]  [y:${boll.y}] `);
+        console.log(boll);
 
     }
 
     function boll_colision(){
 
-        // colisao da boll contra a parede
+        // colisao da boll contra as paredes
         if(boll.x >= canvas.width - boll.width){
-            boll.direction.x = -1;
+            // GOL DO PLAYER
+            goal();
+            // bola vai para o lado de quem levou o gol
+            // boll.direction.x = 1;
         }
-        if(boll.x <= 0){ // margem esquerda
-            boll.direction.x = 1;
+        if(boll.x <= 0){
+            // GOL DO NPC
+            goal();
+            // bola vai para o lado de quem levou o gol
+            // boll.direction.x = -1;
         }
         if(boll.y <= 0){
-            boll.direction.y = 1;
+            //
+            //boll.direction.y = 1;
+            //
+            // ARRUMAR AQUI... QUANDO A BOLA BATE NA PAREDE ELA PERDE O EFEITO DE VELOCIDADE. PQ O VALOR É SETADO EM 1 OU -1
+            // CALCULO para mudar a direção de y mas sem perder a valocidade calculada na colisao.
+            boll.direction.y *= (-1);
+            console.log('BATEU NA PAREDE DE CIMA');
         }
         if(boll.y >= canvas.height - boll.height){
-            boll.direction.y = -1;
+            //
+            // boll.direction.y = -1;
+            //
+            boll.direction.y *= (-1);
+            console.log('BATEU NA PAREDE DE BAIXO');
         }
 
         // colisao da bola contra o player   TENTAR FAZER ESSA PARTE DE COLISÃO GENERICA PARA QLQR PLAYER
         //
         if(boll.x <= player1.x + player1.width && boll.x + boll.width >= player1.x 
             && boll.y <= player1.y + player1.height && boll.y + boll.height >= player1.y ){ // margem esquerda
+                // FAZER CALCULO DA DIREÇÃO Y DA BOLA... DIVISÃO PELO NUMERO DE ÁREAS DO PAD DO JOGADOR
                 boll.direction.x = 1;
+                boll.direction.y = ((boll.y + boll.height/2) - (player1.y + player1.height/2)) / player1.division; // isso muda o algulo da direção da bola
                 console.log('COLISÃO da bola com o Player');
+                console.log(`Direction.Y: ${boll.direction.y}`);
         }
         else if(boll.x <= npcPlayer.x + npcPlayer.width && boll.x + boll.width >= npcPlayer.x 
             && boll.y <= npcPlayer.y + npcPlayer.height && boll.y + boll.height >= npcPlayer.y ){ // margem esquerda
                 boll.direction.x = -1;
+                boll.direction.y = ((boll.y + boll.height/2) - (npcPlayer.y + npcPlayer.height/2)) / npcPlayer.division;
                 console.log('COLISÃO da bola com o npc_Player');
+                console.log(`Direction.Y: ${boll.direction.y}`);
         }
         //
-        // FAZER CALCULO DA DIREÇÃO DA BOLA... DIVISÃO PELO NUMERO DE ÁREAS
 
+    }
+
+    function goal(){
+        // posiciona a bola no meio
+        boll.x = canvas.width/2 - boll.width/2;
+        boll.y = canvas.height/2 - boll.height/2;
+        //
+        boll.direction.y = 0;
+        //
+        // atualiza o placar
+        if(boll.direction.x == 1){
+            // gol do player
+            player_points ++;
+        }
+        else{
+            // gol do npc
+            npcPlayer_points ++;
+        }  
     }
 
     // pressionar a tecla
