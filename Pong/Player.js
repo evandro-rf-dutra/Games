@@ -3,6 +3,7 @@ class Player{
         // configurações do player
         this.x = 0;
         this.y = 0;
+        this.y_middle = 50; // random
         this.width = 18;
         this.height = 100;
         this.color = "#6495ED"; // azul padrao
@@ -27,6 +28,10 @@ class Player{
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.closePath();
 
+    }
+
+    middleRandom(){
+        this.y_middle = Math.random() * this.height +1;
     }
     
 }

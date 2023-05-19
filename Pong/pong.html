@@ -94,7 +94,7 @@
         boll.x = canvas.width/2 - boll.width/2;
         boll.y = canvas.height/2 - boll.height/2;
         boll.direction.x = 1; // começa para direita
-        boll.direction.y = 1;
+        boll.direction.y = 0;
         //
         player1.x = 0;
         player1.y = (canvas.height/2 - player1.height /2);
@@ -178,35 +178,30 @@
         // se a bola estiver indo para a direita
         // se a bola passou do meio
         // então começa a ir atrás dela
-        if( (boll.x > CANVAS_WIDTH / 2) && (boll.direction.x  == 1) ){
-            // se o meio da bola tiver o y maior, que o meio do pad do npc, vai para baixo y+=
-            // se o meio da bola tiver y menor que o meio do pad do npc então vai para cima y-=
-            if( (boll.y + boll.height / 2) > (npcPlayer.y + npcPlayer.height/2) ){
+        if( (boll.x > CANVAS_WIDTH / 2) && (boll.direction.x  > 0) ){
+            // se o meio da bola estiver com o y maior que o y middle do npc, vai para baixo y+=
+            if( (boll.y + boll.height / 2) > (npcPlayer.y + npcPlayer.y_middle) ){
                 // PC VAI PARA BAIXO
                 if( player_colision(npcPlayer.y + npcPlayer.vel, npcPlayer.height) == true){
                     npcPlayer.y +=  npcPlayer.vel;
                 }
             }
-            else if( (boll.y + boll.height / 2) < (npcPlayer.y + npcPlayer.height/2)){
+            // se o meio da bola estiver com o y menor que o y middle do npc então vai para cima y-=
+            else if( (boll.y + boll.height / 2) < (npcPlayer.y + npcPlayer.y_middle)){
                 // PC VAI PARA CIMA
                 if( player_colision(npcPlayer.y - npcPlayer.vel, npcPlayer.height) == true){
                     npcPlayer.y -=  npcPlayer.vel;
                 }
             }
         }
-        // se a bola estiver indo para esquerda começa a voltar para o meio
-        else if(boll.direction.x == -1){
+        // se a bola estiver indo para a esquerda (valor negativo) o pad começa a voltar para o meio do campo
+        else if(boll.direction.x < 0){
             if( npcPlayer.y > CANVAS_HEIGHT / 2 - npcPlayer.height / 2){ // CRIAR FUNCAO GENERICA
-                //if(player_colision(npcPlayer.y - npcPlayer.vel) == true) {
-                    npcPlayer.y -=  npcPlayer.vel;
-                //}
+                npcPlayer.y -=  npcPlayer.vel;
             }
             if( npcPlayer.y < CANVAS_HEIGHT / 2 - npcPlayer.height / 2){
-                //if(player_colision(npcPlayer.y + npcPlayer.vel) == true){
-                    npcPlayer.y +=  npcPlayer.vel;
-                //}
+                npcPlayer.y +=  npcPlayer.vel;
             }
-
         }
     }
 
@@ -214,7 +209,7 @@
 
         boll_colision();
         boll.x += boll.direction.x * boll.vel;
-        boll.y += boll.direction.y * boll.vel;
+        boll.y += boll.direction.y * boll.vel; // ERRO - NAO CONTROLA O Y... ESTA ESTRAPOLANDO O LIMITE
         console.log(` direction.x: ${boll.direction.x} - direction.y: ${boll.direction.y} = [x:${boll.x}]  [y:${boll.y}] `);
         console.log(boll);
 
@@ -235,11 +230,9 @@
             // bola vai para o lado de quem levou o gol
             // boll.direction.x = -1;
         }
-        if(boll.y <= 0){
+        if(boll.y <= 0){ // ERRO - DEVERIA MUDAR PARA DIREÇAO POSITIVA AQUI
             //
             //boll.direction.y = 1;
-            //
-            // ARRUMAR AQUI... QUANDO A BOLA BATE NA PAREDE ELA PERDE O EFEITO DE VELOCIDADE. PQ O VALOR É SETADO EM 1 OU -1
             // CALCULO para mudar a direção de y mas sem perder a valocidade calculada na colisao.
             boll.direction.y *= (-1);
             console.log('BATEU NA PAREDE DE CIMA');
@@ -268,6 +261,7 @@
                 boll.direction.y = ((boll.y + boll.height/2) - (npcPlayer.y + npcPlayer.height/2)) / npcPlayer.division;
                 console.log('COLISÃO da bola com o npc_Player');
                 console.log(`Direction.Y: ${boll.direction.y}`);
+                npcPlayer.middleRandom();
         }
         //
 
