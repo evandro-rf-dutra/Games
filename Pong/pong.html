@@ -106,9 +106,9 @@
 
     function animate(){
         console.log('animate');
-        refresh_player_position(); // posicao do jogador
-        refresh_boll_position(); // atualiza a posição da bola
-        refresh_npcPlayer_position();
+        update_player_position(); // posicao do jogador
+        update_boll_position(); // atualiza a posição da bola
+        update_npcPlayer_position();
         clear();
         drawCenterLine();
         player1.draw(ctx); // desenha o jogador
@@ -146,7 +146,7 @@
     // testa se o movimento esta dentro das dimensões do canvas
     // recebe a coordenada y para onde o quadrado quer mover e a altura do player
     // retorna TRUE se o movimento é valido.
-    function player_colision(y, height){
+    function player_collision(y, height){
 
         if(y < 0 || y > CANVAS_HEIGHT - height){
             return false;
@@ -158,22 +158,22 @@
     }
 
     // atualiza as coordenadas do jogador se o movimento for válido.
-    function refresh_player_position(){
+    function update_player_position(){
 
         if( player1.direction.up == true){
-            if(player_colision(player1.y - player1.vel, player1.height) == true) {
+            if(player_collision(player1.y - player1.vel, player1.height) == true) {
                 player1.y -=  player1.vel;
             }
         }
         if( player1.direction.down == true){
-            if(player_colision(player1.y + player1.vel, player1.height) == true){
+            if(player_collision(player1.y + player1.vel, player1.height) == true){
                 player1.y +=  player1.vel;
             }
         }
 
     }
 
-    function refresh_npcPlayer_position(){ // ARRUMAR ISSO AQUI PARA IR EXATAMENTE NA POSICAO DA BOLA
+    function update_npcPlayer_position(){ // ARRUMAR ISSO AQUI PARA IR EXATAMENTE NA POSICAO DA BOLA
 
         // se a bola estiver indo para a direita
         // se a bola passou do meio
@@ -182,14 +182,14 @@
             // se o meio da bola estiver com o y maior que o y middle do npc, vai para baixo y+=
             if( (boll.y + boll.height / 2) > (npcPlayer.y + npcPlayer.y_middle) ){
                 // PC VAI PARA BAIXO
-                if( player_colision(npcPlayer.y + npcPlayer.vel, npcPlayer.height) == true){
+                if( player_collision(npcPlayer.y + npcPlayer.vel, npcPlayer.height) == true){
                     npcPlayer.y +=  npcPlayer.vel;
                 }
             }
             // se o meio da bola estiver com o y menor que o y middle do npc então vai para cima y-=
             else if( (boll.y + boll.height / 2) < (npcPlayer.y + npcPlayer.y_middle)){
                 // PC VAI PARA CIMA
-                if( player_colision(npcPlayer.y - npcPlayer.vel, npcPlayer.height) == true){
+                if( player_collision(npcPlayer.y - npcPlayer.vel, npcPlayer.height) == true){
                     npcPlayer.y -=  npcPlayer.vel;
                 }
             }
@@ -205,19 +205,22 @@
         }
     }
 
-    function refresh_boll_position(){
+    // ALTERAR ESTE NOME PARA UPDATE
+    function update_boll_position(){
 
-        boll_colision();
+        // atualiza as coordenadas
         boll.x += boll.direction.x * boll.vel;
-        boll.y += boll.direction.y * boll.vel; // ERRO - NAO CONTROLA O Y... ESTA ESTRAPOLANDO O LIMITE
-        console.log(` direction.x: ${boll.direction.x} - direction.y: ${boll.direction.y} = [x:${boll.x}]  [y:${boll.y}] `);
-        console.log(boll);
+        boll.y += boll.direction.y * boll.vel;
+        // testa o movimento feito
+        boll_collision();
+        //
+        console.log(` direction.x: ${boll.direction.x}  direction.y: ${boll.direction.y} || [x:${boll.x}]  [y:${boll.y}] `);
 
     }
 
-    function boll_colision(){
+    function boll_collision(){
 
-        // colisao da boll contra as paredes
+        // se foi GOL
         if(boll.x >= canvas.width - boll.width){
             // GOL DO PLAYER
             goal();
@@ -230,37 +233,34 @@
             // bola vai para o lado de quem levou o gol
             // boll.direction.x = -1;
         }
-        if(boll.y <= 0){ // ERRO - DEVERIA MUDAR PARA DIREÇAO POSITIVA AQUI
-            //
-            //boll.direction.y = 1;
+        // SE passou de um dos limites então reposiciona o y da bola
+        if(boll.y <= 0){
             // CALCULO para mudar a direção de y mas sem perder a valocidade calculada na colisao.
             boll.direction.y *= (-1);
-            console.log('BATEU NA PAREDE DE CIMA');
+            console.log(`COLISÃO: parede de cima | boll.y[${boll.y}] = 0`);
+            boll.y = 0;
         }
         if(boll.y >= canvas.height - boll.height){
             //
-            // boll.direction.y = -1;
-            //
             boll.direction.y *= (-1);
-            console.log('BATEU NA PAREDE DE BAIXO');
+            console.log(`COLISÃO: parede de baixo | boll.y[${boll.y}] = height limite`);
+            boll.y = canvas.height - boll.height;
         }
 
-        // colisao da bola contra o player   TENTAR FAZER ESSA PARTE DE COLISÃO GENERICA PARA QLQR PLAYER
+        // colisao da bola contra o player   TENTAR OTIMIZAR ESTA PARTE, CÓDIGO É IGUAL EM AMBAS CONDICIONAIS
         //
         if(boll.x <= player1.x + player1.width && boll.x + boll.width >= player1.x 
             && boll.y <= player1.y + player1.height && boll.y + boll.height >= player1.y ){ // margem esquerda
-                // FAZER CALCULO DA DIREÇÃO Y DA BOLA... DIVISÃO PELO NUMERO DE ÁREAS DO PAD DO JOGADOR
+                //
                 boll.direction.x = 1;
-                boll.direction.y = ((boll.y + boll.height/2) - (player1.y + player1.height/2)) / player1.division; // isso muda o algulo da direção da bola
-                console.log('COLISÃO da bola com o Player');
-                console.log(`Direction.Y: ${boll.direction.y}`);
+                boll.direction.y = ((boll.y + boll.height/2) - (player1.y + player1.height/2)) / player1.division; // isso muda o angulo da direção da bola
+                console.log(`COLISÃO: bola contra o Player | Direction.Y: ${boll.direction.y}`);
         }
         else if(boll.x <= npcPlayer.x + npcPlayer.width && boll.x + boll.width >= npcPlayer.x 
             && boll.y <= npcPlayer.y + npcPlayer.height && boll.y + boll.height >= npcPlayer.y ){ // margem esquerda
                 boll.direction.x = -1;
                 boll.direction.y = ((boll.y + boll.height/2) - (npcPlayer.y + npcPlayer.height/2)) / npcPlayer.division;
-                console.log('COLISÃO da bola com o npc_Player');
-                console.log(`Direction.Y: ${boll.direction.y}`);
+                console.log(`COLISÃO: bola contra o npc_Player | Direction.Y: ${boll.direction.y} `);
                 npcPlayer.middleRandom();
         }
         //
