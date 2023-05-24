@@ -1,0 +1,11 @@
+
+Jogo PONG
+
+Desenvolvido com HTML Canvas e Javascript
+
+- Jogador vs CPU (npc Player)
+- CPU possui movimentos automatizados, simulando outro Player
+- Movimentos da bola são dinâmicos de direção e velocidade, depende em qual área do player foi a colisão
+- Características do jogo podem ser alteradas nas classes Boll e Player.
+
+- A pasta SCREENSHOTS possui algumas capturas de tela do jogo em funcionamento.

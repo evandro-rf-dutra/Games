@@ -1,7 +1,7 @@
 class Boll{
 
     constructor(){
-        this.x = 0; // precisa estar no meio
+        this.x = 0;
         this.y = 0;
         this.width = 15;
         this.height = 15;
@@ -16,7 +16,6 @@ class Boll{
 
     draw(context){
         context.beginPath();
-        // desenha o retangulo
         context.fillStyle = this.color;
         context.lineWidth = this.lineBorder; // contorno
         context.strokeRect(this.x, this.y, this.width, this.height); // contorno no retangulo

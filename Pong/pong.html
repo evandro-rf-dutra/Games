@@ -1,5 +1,3 @@
-<!-- Curso de canvas CFB. Exercício: desenvolver o jogo PONG -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,8 +21,8 @@
         background-color: black;
         border-left: 3px solid black;
         border-right: 3px solid black;
-        border-bottom: 5px solid #00FF7F;
-        border-top: 5px solid #00FF7F;
+        border-bottom: 5px solid greenyellow;
+        border-top: 5px solid greenyellow;
         position: absolute;
         top: 50%;
         left: 50%;
@@ -41,7 +39,7 @@
     }
     #btn:hover{
         background-color: greenyellow;
-        color: darkgray;
+        color: black;
         font-size: large;
     }
 
@@ -82,6 +80,7 @@
         this.remove();
     });
 
+    drawStartScreen();
     const boll = new Boll();
     const player1 = new Player();
     const npcPlayer = new Player();
@@ -97,10 +96,10 @@
         boll.direction.y = 0;
         //
         player1.x = 0;
-        player1.y = (canvas.height/2 - player1.height /2);
+        player1.y = (canvas.height/2) - (player1.height /2);
         //
         npcPlayer.x = canvas.width - npcPlayer.width;
-        npcPlayer.y = (canvas.height/2 - npcPlayer.height /2);
+        npcPlayer.y = (canvas.height/2) - (npcPlayer.height /2);
         npcPlayer.color = "#E9967A";
     }
 
@@ -116,6 +115,14 @@
         boll.draw(ctx);
         drawScoreboard();
         requestAnimationFrame(animate);
+    }
+
+    function drawStartScreen(){
+        ctx.beginPath();
+        ctx.font = '50px Arial';
+        ctx.fillStyle = '#DCDCDC';
+        ctx.fillText(' PONG ', (CANVAS_WIDTH / 2) - 100 , 150);
+        ctx.closePath();
     }
 
     function drawScoreboard(){
@@ -173,58 +180,66 @@
 
     }
 
-    function update_npcPlayer_position(){ // ARRUMAR ISSO AQUI PARA IR EXATAMENTE NA POSICAO DA BOLA
+    function update_npcPlayer_position(){
 
         let m_boll = boll.y + (boll.height / 2); // meio da bola
         let m_npcPlayer = npcPlayer.y + npcPlayer.y_middle;
+        let y_distance = m_boll - m_npcPlayer; // diferença entre os meios
 
         // se a bola estiver indo para a direita
         // se a bola passou do meio
         // então começa a ir atrás dela
         if( (boll.x > CANVAS_WIDTH / 2) && (boll.direction.x  > 0) ){
 
-            // se o meio da bola estiver com o y maior que o y middle do npc, vai para baixo y+=
+            // se o meio da bola estiver com o y maior que o y do npc, vai para baixo y+=
             if( m_boll > m_npcPlayer ){
                 // PC VAI PARA BAIXO
-                     // positivo
-                    if( (m_boll - m_npcPlayer) <= npcPlayer.vel ){
-                        console.log(`Movimento preciso ${m_boll - m_npcPlayer} < ${npcPlayer.vel}`);
-                        // faz o calculo exato do Y para igualar os meios
-                        let precision = m_boll - m_npcPlayer;
+                    // positivo, resultado da subtração será positivo
+                    if( y_distance <= npcPlayer.vel ){
+                        //
+                        console.log(`NpcP Movimento preciso ${y_distance} < ${npcPlayer.vel}`);
                         // verifica se o movimento é válido
-                        if( player_collision(npcPlayer.y + precision, npcPlayer.height) == true){
-                            npcPlayer.y +=  precision;
+                        if( player_collision(npcPlayer.y + y_distance, npcPlayer.height) == true){
+                            npcPlayer.y +=  y_distance;
                         }
                     }
                     else{
+                        // movimento normal
                         if( player_collision(npcPlayer.y + npcPlayer.vel, npcPlayer.height) == true){
+                            console.log(`NpcP Movimento Normal`);
                             npcPlayer.y +=  npcPlayer.vel;
                         }
                     }
             }
-            // se o meio da bola estiver com o y menor que o y middle do npc então vai para cima y-=
+            // se o meio da bola estiver com o y menor, então vai para cima y-=
             else if( m_boll < m_npcPlayer){
                 // PC VAI PARA CIMA
                     // negativo
-                    if( (m_boll - m_npcPlayer) >= (npcPlayer.vel *(-1)) ){
-                        console.log(`Movimento preciso ${m_boll - m_npcPlayer} < ${npcPlayer.vel *(-1)}`);
-                        // calculo
-                        let precision = (m_boll - m_npcPlayer) *(-1);
+                    // necessário inverter o sinal
+                    y_distance *= (-1);
+                    //
+                    if( y_distance <= npcPlayer.vel ){
+                        //
+                        console.log(`Movimento preciso ${m_boll - m_npcPlayer} ~ ${y_distance} <= ${npcPlayer.vel}`);
                         // verifica se o movimento é válido
-                        if( player_collision(npcPlayer.y - precision, npcPlayer.height) == true){
-                            npcPlayer.y -=  precision;
+                        if( player_collision(npcPlayer.y - y_distance, npcPlayer.height) == true){
+                            npcPlayer.y -= y_distance;
                         }
                     }
                     else{
                         if( player_collision(npcPlayer.y - npcPlayer.vel, npcPlayer.height) == true){
+                            console.log(`NpcP Movimento Normal`);
                             npcPlayer.y -=  npcPlayer.vel;
                         }
                     }
             }
         }
-        // se a bola estiver indo para a esquerda (valor negativo) o pad começa a voltar para o meio do campo
-        else if(boll.direction.x < 0 && (boll.x < CANVAS_WIDTH / 2)){
-            if( npcPlayer.y > CANVAS_HEIGHT / 2 - npcPlayer.height / 2){ // CRIAR FUNCAO GENERICA
+        // se a bola estiver indo para a esquerda (valor negativo de x)
+        // se passou do meio de campo
+        // então npc começa a voltar para a posição inicial
+        else if( (boll.direction.x < 0) && (boll.x < CANVAS_WIDTH / 2) ){
+            //
+            if( npcPlayer.y > CANVAS_HEIGHT / 2 - npcPlayer.height / 2){
                 npcPlayer.y -=  npcPlayer.vel;
             }
             if( npcPlayer.y < CANVAS_HEIGHT / 2 - npcPlayer.height / 2){
@@ -285,6 +300,7 @@
                 boll.direction.x *= (-1); // inverte o valor
                 // calculo para mudar o angulo da direção da bola. calculo da distancia dos retangulos / numero de areas de colisao do pad.
                 boll.direction.y = ((boll.y + boll.height/2) - (player.y + player.height/2)) / player.division;
+                //
                 console.log(`COLISÃO: bola contra o Player | Dir x:${boll.direction.x} Dir.y: ${boll.direction.y}`);
                 player.middleRandom();
                 console.log(`Colisão, middle random: ${player.y_middle}`);
