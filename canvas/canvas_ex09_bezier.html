@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> ex 09 Bezier Curve </title>
+</head>
+
+<style>
+    #canvas{
+        width: 800px;
+        height: 600px;
+
+        border: 1px solid black;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+</style>
+
+
+<body>
+    <canvas id="canvas" class="canvas"> ERRO! </canvas>
+</body>
+
+<script>
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 800;
+    canvas.height = 600;
+
+    class Heart{
+            constructor(){
+                this.pointA = {x:300, y:100}; // lineTo
+                //
+                this.pointB = {x:400, y:0};
+                this.pointC = {x:500, y:100};
+                this.pointD = {x:600, y:200};
+                this.pointE = {x:500, y:320};
+                this.pointF = {x:420, y:420};
+                this.pointG = {x:300, y:500};
+                //
+                this.point1 = {x:180, y:420};
+                this.point2 = {x:100, y:320};
+                this.point3 = {x:0, y:200};
+                this.point4 = {x:100, y:100};
+                this.point5 = {x:200, y:0};
+            }
+            drawHeart(ctx){
+
+                ctx.beginPath();
+                //
+                ctx.StrokeStyle = "#6495ED";
+                ctx.lineWidth = 2;
+                //
+                ctx.lineTo(this.pointA.x, this.pointA.y);
+                //
+                ctx.quadraticCurveTo(this.pointB.x, this.pointB.y, this.pointC.x, this.pointC.y);
+                ctx.quadraticCurveTo(this.pointD.x, this.pointD.y, this.pointE.x, this.pointE.y);
+                ctx.quadraticCurveTo(this.pointF.x, this.pointF.y, this.pointG.x, this.pointG.y);
+
+                ctx.quadraticCurveTo(this.point1.x, this.point1.y, this.point2.x, this.point2.y);
+                ctx.quadraticCurveTo(this.point3.x, this.point3.y , this.point4.x, this.point4.y);
+                ctx.quadraticCurveTo(this.point5.x, this.point5.y , this.pointA.x, this.pointA.y);
+
+                ctx.stroke();
+                //
+                ctx.closePath();
+            }
+    };
+
+    var heart = new Heart();
+
+    heart.drawHeart(ctx);
+
+
+</script>
+
+</html>

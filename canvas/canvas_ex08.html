@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ex 08 - shadow </title>
+</head>
+
+<style>
+    #canvas{
+        width: 600px;
+        height:400px;
+
+        border: 1px solid black;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+</style>
+
+
+<body>
+    <canvas id="canvas" class="canvas"> ERRO! </canvas>
+</body>
+
+<script>
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 600;
+    canvas.height = 400;
+
+    const r_width = 150;
+    const r_height = 150;
+
+    drawRect();
+    drawText('canvas para Jogos');
+
+    function drawRect(){
+        ctx.beginPath();
+
+        // shadow
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowOffsetX = 10;
+        ctx.shadowOffsetY = 10;
+        ctx.shadowBlur = 10; // opacidade, quanto maior mais embaçado
+        //
+        ctx.fillStyle = "#6495ED";
+        ctx.lineWidth = 4;
+        ctx.fillRect(100, 100, r_width, r_height); // só desenha a sombra quando tiver algum FILL
+        // a sombra pode ser aplicada em qualquer elemento inclusive texto
+        ctx.closePath();
+    }
+
+    function drawText(txt){
+        ctx.beginPath();
+        
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowOffsetX = 10;
+        ctx.shadowOffsetY = 10;
+        ctx.shadowBlur = 5; // opacidade, quanto maior mais embaçado
+
+        ctx.font = 'italic 32px sans-serif';
+        ctx.fillStyle = '#696969';
+        ctx.fillText(txt, 100, 300); 
+
+        ctx.closePath();
+    }
+
+</script>
+
+</html>
