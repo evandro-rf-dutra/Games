@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title> ex 11 Radial Grandient </title>
+</head>
+
+<style>
+    #canvas{
+        width: 800px;
+        height: 600px;
+
+        border: 1px solid black;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+</style>
+
+
+<body>
+    <canvas id="canvas" class="canvas"> ERRO! </canvas>
+</body>
+
+<script>
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 800;
+    canvas.height = 600;
+
+    let radialGradient = {
+        x0: 10,
+        y0: 10,
+        r0: 50,
+        //
+        x1: 300,
+        y1: 300,
+        r1: 100
+    };
+
+    var gradient = ctx.createRadialGradient(radialGradient.x0, radialGradient.y0, radialGradient.r0,
+                                                radialGradient.x1, radialGradient.y1, radialGradient.r1 );
+    // A number between 0 and 1. 0 represents the start of the gradient and 1 represents the end.
+    gradient.addColorStop(0,'blue');
+    gradient.addColorStop(0.5,'white');
+    gradient.addColorStop(0.8,'green');
+    gradient.addColorStop(1,'pink');
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(10,10,canvas.width,canvas.height);
+</script>
+
+</html>
